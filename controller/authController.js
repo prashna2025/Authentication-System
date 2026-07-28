@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsontoken';
+import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
 
 
@@ -46,13 +46,13 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.json({ success: false, message: 'Email and password are required ' })
+        return res.json({ success: false, message: 'Email and password are required ' });
     }
     try {
         const user = await userModel.findOne({ email });
 
         if (!user) {
-            return res.json({ success: false, message: 'Invalid email' })
+            return res.json({ success: false, message: 'Invalid email' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -81,7 +81,10 @@ export const login = async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 
+};
+
     //user logout
+
     export const logout = async (req, res) => {
         try {
             res.clearCookie('token', {
@@ -98,4 +101,3 @@ export const login = async (req, res) => {
             return res.json({ success: false, message: error.message });
         }
     }
-}
