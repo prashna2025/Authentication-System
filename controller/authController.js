@@ -37,15 +37,15 @@ export const register = async (req, res) => {
         });
 
         //Sending welcome email
-        const mailOptions ={
+        const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: email,
-            subject:'welcome to Mern-Auth',
-            text:  `Welcome to Mern-Auth website.Your account has been created with email id: ${email}`
+            subject: 'welcome to Mern-Auth',
+            text: `Welcome to Mern-Auth website.Your account has been created with email id: ${email}`
 
         }
 
-await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
 
 
 
@@ -53,7 +53,7 @@ await transporter.sendMail(mailOptions);
 
 
 
-        return res.json({ success: true,message: "User Registered successfully" });
+        return res.json({ success: true, message: "User Registered successfully" });
 
     } catch (error) {
         res.json({ success: false, message: error.message })
@@ -94,7 +94,7 @@ export const login = async (req, res) => {
 
 
 
-        return res.json({ success: true,message: "Logged In" });
+        return res.json({ success: true, message: "Logged In" });
 
     } catch (error) {
         return res.json({ success: false, message: error.message });
