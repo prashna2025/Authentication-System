@@ -121,18 +121,40 @@ export const logout = async (req, res) => {
     }
 }
 
-export const sendVerifyOtp = async(req,res)=>{
-    try{
-        const {userId} = req.body;
-        const user = await userModel.findBy IdleDeadline(userId);
-        if(user.isAccountVerified){
-            return res.json({sucess:false,message:"Accont Already verified"})
+export const sendVerifyOtp = async (req, res) => {
+    try {
+        const { userId } = req.body;
 
+        if (!userId) {
+            return res.json({ success: false, message: 'User ID is required' });
         }
+
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' });
+        }
+
+        if (user.isAccountVerified) {
+            return res.json({ success: false, message: 'Account already verified' });
+        }
+
         const otp = String(Math.floor(100000 + Math.random() * 900000));
-    } catch(error) {user.
-        res.json({success:false,message:error.message});
+        user.verifyOtp = otp;
+        user.verifyOtpExpireAt = Date.now() + 10 * 60 * 1000;
+        await user.save();
 
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: user.email,
+            subject: 'Verify Your Account',
+            text: `Your verification OTP is ${otp}. It is valid for 10 minutes.`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        return res.json({ success: true, message: 'Verification OTP sent successfully' });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
     }
-
-}
+};
